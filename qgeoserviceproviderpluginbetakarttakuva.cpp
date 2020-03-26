@@ -1,5 +1,6 @@
 #include "qgeoserviceproviderpluginbetakarttakuva.h"
 #include "qgeocodingmanagerenginebetakarttakuva.h"
+#include "qplacemanagerenginebetakarttakuva.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -32,12 +33,8 @@ QGeoRoutingManagerEngine *QGeoServiceProviderFactoryBetaKarttakuva::createRoutin
 QPlaceManagerEngine *QGeoServiceProviderFactoryBetaKarttakuva::createPlaceManagerEngine(
     const QVariantMap &parameters, QGeoServiceProvider::Error *error, QString *errorString) const
 {
+return new QPlaceManagerEngineBetaKarttakuva(parameters, error, errorString);
 
-    Q_UNUSED(parameters);
-    Q_UNUSED(error);
-    Q_UNUSED(errorString);
-
-    return 0;
 }
 
 QT_END_NAMESPACE
