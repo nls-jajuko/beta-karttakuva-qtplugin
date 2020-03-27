@@ -14,8 +14,8 @@
 QT_BEGIN_NAMESPACE
 
 QPlaceSearchReplyBetaKarttakuva::QPlaceSearchReplyBetaKarttakuva(const QPlaceSearchRequest &request,
-                                             QNetworkReply *reply, QPlaceManagerEngineBetaKarttakuva *parent)
-:   QPlaceSearchReply(parent)
+                                                                 QNetworkReply *reply, QPlaceManagerEngineBetaKarttakuva *parent)
+    :   QPlaceSearchReply(parent)
 {
     Q_ASSERT(parent);
     if (!reply) {
@@ -57,7 +57,9 @@ void QPlaceSearchReplyBetaKarttakuva::replyFinished()
     QJsonObject object = document.object();
 
     if( !object.contains("features") ) {
+        setError(UnknownError, QStringLiteral("Null reply"));
         return;
+
     }
 
     QJsonArray features = object.value(QStringLiteral("features")).toArray();
