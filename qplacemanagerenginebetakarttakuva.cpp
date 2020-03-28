@@ -48,6 +48,7 @@ QPlaceManagerEngineBetaKarttakuva::~QPlaceManagerEngineBetaKarttakuva()
 
 QPlaceSearchReply *QPlaceManagerEngineBetaKarttakuva::search(const QPlaceSearchRequest &request)
 {
+    qInfo() << "About to geocode with betakarttakuva";
     bool unsupported = false;
 
     // Only public visibility supported
@@ -55,8 +56,11 @@ QPlaceSearchReply *QPlaceManagerEngineBetaKarttakuva::search(const QPlaceSearchR
                    request.visibilityScope() != QLocation::PublicVisibility;
     unsupported |= request.searchTerm().isEmpty() ;
 
-    if (unsupported)
+    if (unsupported) {
+        qInfo() << "Unsupported at betakarttakuva";
+
         return QPlaceManagerEngine::search(request);
+    }
 
     QUrlQuery queryItems;
 
@@ -71,7 +75,12 @@ QPlaceSearchReply *QPlaceManagerEngineBetaKarttakuva::search(const QPlaceSearchR
 
     QUrl requestUrl(QString("%1/geocoding/v1/pelias/search").arg(m_urlPrefix));
 
+
+
     requestUrl.setQuery(queryItems);
+
+    qInfo() << "URL" << requestUrl.toString();
+
 
     QNetworkRequest rq(requestUrl);
     rq.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);

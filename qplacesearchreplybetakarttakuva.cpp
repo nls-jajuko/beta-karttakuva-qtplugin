@@ -70,7 +70,6 @@ void QPlaceSearchReplyBetaKarttakuva::replyFinished()
     for (int i = 0; i < features.count(); ++i) {
         QJsonObject item = features.at(i).toObject();
         QPlaceResult pr = parsePlaceResult(item);
-        placeIds.append(pr.place().placeId());
         results.append(pr);
     }
 
@@ -95,29 +94,62 @@ QPlaceResult QPlaceSearchReplyBetaKarttakuva::parsePlaceResult(const QJsonObject
     QPlace place;
     QGeoCoordinate coordinate ;
 
+
+
+    QString label;
+    QString municipality;
+    QString placeType;
+    QString resultTitle ;
+
+    if(item.contains(QStringLiteral("properties"))) {
+        QJsonObject props = item.value(QStringLiteral("properties")).toObject();
+
+        if( props.contains(QStringLiteral("label"))) {
+           label = props.value(QStringLiteral("label")).toString();
+        }
+
+        if( props.contains(QStringLiteral("label:municipality"))) {
+           municipality = props.value(QStringLiteral("label:municipality")).toString();
+        }
+
+        if( props.contains(QStringLiteral("label:placeType"))) {
+           placeType = props.value(QStringLiteral("label:placeType")).toString();
+        }
+
+    }
+
     if (item.contains(QStringLiteral("geometry"))) {
         QJsonObject geom = item.value(QStringLiteral("geometry")).toObject();
         QJsonArray a = geom.value(QStringLiteral("coordinates")).toArray();
-        if (a.count() == 2) {
-            coordinate.setLatitude(a.at(1).toString().toDouble());
-            coordinate.setLongitude(a.at(0).toString().toDouble());
 
-        }
+        double lon = a.at(0).toDouble(),
+               lat = a.at(1).toDouble();
+        coordinate.setLatitude(lat);
+        coordinate.setLongitude(lon);
+
     }
 
-    QString title = item.value("label").toString();
+    QString labelText =
+            QString("%1 %2 (%3)").arg( label, municipality, placeType );
 
-    place.setName(title);
+    qInfo() << labelText << QStringLiteral(" ")<<coordinate.longitude()
+            << QStringLiteral(",")<<coordinate.latitude();
 
+    place.setName(label);
 
     QGeoLocation location;
     location.setCoordinate(coordinate);
+
+    QGeoAddress address;
+    address.setText(label);
+
+    location.setAddress(address);
 
     place.setLocation(location);
 
     QPlaceResult result;
     result.setPlace(place);
-    result.setTitle(title);
+    result.setTitle(labelText);
 
     return result;
 }

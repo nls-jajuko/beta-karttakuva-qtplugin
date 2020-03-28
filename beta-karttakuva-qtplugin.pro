@@ -1,5 +1,5 @@
 TEMPLATE = lib
-TARGET = qtbetakarttakuva_plugin
+TARGET = qtgeoservices_betakarttakuva
 QT += location-private positioning-private network concurrent
 
 QT_FOR_CONFIG += location-private
@@ -21,6 +21,8 @@ HEADERS += \
     qplacesearchreplybetakarttakuva.h
 
 OTHER_FILES += \
+    betakarttakuva_plugin.json
+DISTFILES += \
     betakarttakuva_plugin.json
 
 PLUGIN_TYPE = geoservices

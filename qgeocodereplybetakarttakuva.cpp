@@ -31,10 +31,37 @@ QGeoCodeReplyBetaKarttakuva::~QGeoCodeReplyBetaKarttakuva()
 {
 }
 
-static QGeoAddress parseObject(const QJsonObject &object)
+static QGeoAddress parseObject(const QJsonObject &item)
 {
+    QString label;
+    QString municipality;
+    QString placeType;
+    QString resultTitle ;
+
+    if(item.contains(QStringLiteral("properties"))) {
+        QJsonObject props = item.value(QStringLiteral("properties")).toObject();
+
+        if( props.contains(QStringLiteral("label"))) {
+           label = props.value(QStringLiteral("label")).toString();
+        }
+
+        if( props.contains(QStringLiteral("label:municipality"))) {
+           municipality = props.value(QStringLiteral("label:municipality")).toString();
+        }
+
+        if( props.contains(QStringLiteral("label:placeType"))) {
+           placeType = props.value(QStringLiteral("label:placeType")).toString();
+        }
+
+    }
+
+    QString labelText =
+            QString("%1 %2 (%3)").arg( label, municipality, placeType );
+
+
+
     QGeoAddress address;
-    address.setText(object.value(QStringLiteral("label")).toString());
+    address.setText(labelText);
     return address;
 }
 
@@ -70,11 +97,12 @@ void QGeoCodeReplyBetaKarttakuva::networkReplyFinished()
                 if (object.contains(QStringLiteral("geometry"))) {
                     QJsonObject geom = object.value(QStringLiteral("geometry")).toObject();
                     QJsonArray a = geom.value(QStringLiteral("coordinates")).toArray();
-                    if (a.count() == 2) {
-                        coordinate.setLatitude(a.at(1).toString().toDouble());
-                        coordinate.setLongitude(a.at(0).toString().toDouble());
 
-                    }
+                    double lon = a.at(0).toDouble(),
+                           lat = a.at(1).toDouble();
+                    coordinate.setLatitude(lat);
+                    coordinate.setLongitude(lon);
+
                 }
 
                 QGeoLocation location;
