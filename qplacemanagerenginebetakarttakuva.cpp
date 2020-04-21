@@ -30,6 +30,10 @@ QPlaceManagerEngineBetaKarttakuva::QPlaceManagerEngineBetaKarttakuva(const QVari
     else
         m_urlPrefix = QStringLiteral("https://beta-karttakuva.maanmittauslaitos.fi");
 
+    if (parameters.contains(QStringLiteral("betakarttakuva.places.apikey")))
+        m_apiKey = parameters.value(QStringLiteral("betakarttakuva.places.apikey")).toString();
+    else
+        m_apiKey = QStringLiteral("");
 
     if (parameters.contains(QStringLiteral("betakarttakuva.places.debug_query")))
         m_debugQuery = parameters.value(QStringLiteral("BetaKarttakuva.places.debug_query")).toBool();
@@ -67,6 +71,11 @@ QPlaceSearchReply *QPlaceManagerEngineBetaKarttakuva::search(const QPlaceSearchR
     queryItems.addQueryItem(QStringLiteral("text"), request.searchTerm());
 
     QVariantMap parameters = request.searchContext().toMap();
+
+
+    if(m_apiKey.length()>0) {
+        queryItems.addQueryItem(QStringLiteral("api-key"), m_apiKey);
+    }
 
     queryItems.addQueryItem(QStringLiteral("crs"), QStringLiteral("http://www.opengis.net/def/crs/EPSG/0/4326"));
 

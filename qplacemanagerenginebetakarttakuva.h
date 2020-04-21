@@ -43,6 +43,7 @@ private:
     QNetworkAccessManager *m_networkManager;
     QByteArray m_userAgent;
     QString m_urlPrefix;
+    QString m_apiKey;
     QList<QLocale> m_locales;
     bool m_debugQuery = false;
     int m_limit = 50; // the default page size of the public nominatim server

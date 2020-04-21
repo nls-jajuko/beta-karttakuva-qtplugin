@@ -32,6 +32,8 @@ private:
     QNetworkAccessManager *m_networkManager;
     QByteArray m_userAgent;
     QString m_urlPrefix;
+    QString m_apiKey;
+
     bool m_debugQuery = false;
 
 };

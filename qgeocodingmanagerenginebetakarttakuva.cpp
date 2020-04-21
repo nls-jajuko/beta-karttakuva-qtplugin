@@ -40,6 +40,11 @@ QGeocodingManagerEngineBetaKarttakuva::QGeocodingManagerEngineBetaKarttakuva(con
     else
         m_urlPrefix = QStringLiteral("https://beta-karttakuva.maanmittauslaitos.fi");
 
+    if (parameters.contains(QStringLiteral("betakarttakuva.geocoding.apikey")))
+        m_apiKey = parameters.value(QStringLiteral("betakarttakuva.geocoding.apikey")).toString();
+    else
+        m_apiKey = QStringLiteral("");
+
     if (parameters.contains(QStringLiteral("betakarttakuva.geocoding.debug_query")))
         m_debugQuery = parameters.value(QStringLiteral("betakarttakuva.geocoding.debug_query")).toBool();
 
@@ -69,6 +74,11 @@ QGeoCodeReply *QGeocodingManagerEngineBetaKarttakuva::geocode(const QString &add
 
     QUrl url(QString("%1/geocoding/v1/pelias/search").arg(m_urlPrefix));
     QUrlQuery query;
+
+    if(m_apiKey.length()>0) {
+        query.addQueryItem(QStringLiteral("api-key"), m_apiKey);
+    }
+
     query.addQueryItem(QStringLiteral("text"), address);
     query.addQueryItem(QStringLiteral("accept-language"), locale().name().left(2));
     query.addQueryItem(QStringLiteral("crs"), QStringLiteral("http://www.opengis.net/def/crs/EPSG/0/4326"));
